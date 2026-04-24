@@ -27,6 +27,7 @@ with st.sidebar:
                     st.session_state.shock_button_pressed = True
 
             if st.session_state.shock_button_pressed:
+                name = st.text_input("Name the shock", help="Give a name to the shock you want to add")
                 element = st.multiselect(
                     "Select an element of the food system",
                     ["Production", "Imports", "Exports", "Retail", "Seed", "Feed", "Stocks"],
@@ -55,7 +56,6 @@ with st.sidebar:
                         st.slider("Select the central year of the logistic curve", 2025, 2100, 2025, step=1)
                         st.slider("Select width of the logistic curve ", 1, 20, 5, step=1)
 
-
                 severity = st.slider(
                     "Select the percentage change",
                     -100, 100, 0, step=10)
@@ -73,5 +73,30 @@ with st.sidebar:
                         region = st.multiselect(
                             "Select the region affected",
                             ["North", "South", "East", "West"])
+                        
+
+                button_cols = st.columns(2)
+                with button_cols[0]:
+                    submit_button = st.button("Submit shock", key="submit_shock")
+                    if submit_button:
+                        st.session_state.shock_dict[name] = {
+                            "element": element,
+                            "items": items,
+                            "timescale": timescale,
+                            "severity": severity,
+                            "area": area,
+                            "region": region
+                        }
+                        st.session_state.shock_button_pressed = False
+                        st.success(f"Shock {name} submitted")
+                        st.rerun()
+                with button_cols[1]:
+                    reset_shocks = st.button("Reset shocks", key="reset_shocks")
+                    if reset_shocks:
+                        st.session_state.shock_dict = {}
+                        st.session_state.shock_button_pressed = False
+                        st.success("Shocks reset")
+                        st.rerun()
+
 
 st.write(st.session_state.shock_dict)
