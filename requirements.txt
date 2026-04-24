@@ -1,0 +1,5 @@
+streamlit
+numpy
+xarray
+matplotlib
+streamlit-extras
