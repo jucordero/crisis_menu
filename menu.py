@@ -25,29 +25,53 @@ with st.sidebar:
                 shock_button = st.button("Add new shock", key="shock_button")
                 if shock_button:
                     st.session_state.shock_button_pressed = True
-                    st.session_state.response_button_pressed = False
-
-            with st.container(key="green_button"):
-                response_button = st.button("Add new response", key="response_button")
-                if response_button:
-                    st.session_state.response_button_pressed = True
-                    st.session_state.shock_button_pressed = False
 
             if st.session_state.shock_button_pressed:
-                new_shock = st.selectbox("Select a shock", crises_list, index=None)
-                if new_shock is not None:
-                    with st.container(border=True):
-                        shock_options = shock_menu_manager(new_shock)
-                    add_new_shock = st.button("Add shock to dictionary", key="add_shock")
-                    if add_new_shock:
-                        st.session_state.shock_dict[new_shock] = shock_options
-                        st.success(f"{new_shock} added to shock dictionary")
+                element = st.multiselect(
+                    "Select an element of the food system",
+                    ["Production", "Imports", "Exports", "Retail", "Seed", "Feed", "Stocks"],
+                    help="Specify which element(s) of the food system are impacted")
+                items = st.multiselect(
+                    "Select the items that are affected",
+                    ["Wheat", "Maize", "Rice", "Soybeans", "Other"],
+                    help="Specify which food items or food item groups are is impacted")
+                timescale = st.selectbox(
+                    "Select the timescale of the shock",
+                    ["Single year", "Continuous", "Gradual"],
+                    help = """Specify the time profiling of the perturbation.
+                        Choose from 
+                        ‘Single year’: the perturbation only affects the individual year(s) selected; 
+                        ‘Continuous’: the perturbation starts at the selected year and continues for all years following that
+                        ‘Gradual’: the perturbation is smoothly changing (logistic curve)""")
+                
+                if timescale == "Single year":
+                    st.slider("Select the year when the shock happens", 2025, 2100, 2025, step=1)
 
-            if st.session_state.response_button_pressed:
-                new_shock = st.selectbox("Select a response", response_list, index=None)
-                add_new_response = st.button("Add response to dictionary", key="add_shock")
-                if add_new_response:
-                    st.session_state.shock_dict[new_shock] = []
-                    st.success(f"{new_shock} added to shock dictionary")
+                if timescale == "Continuous":
+                    st.slider("Select the starting year of the shock", 2025, 2100, 2025, step=1)
+
+                if timescale == "Gradual":
+                    with st.container(border=True):
+                        st.slider("Select the central year of the logistic curve", 2025, 2100, 2025, step=1)
+                        st.slider("Select width of the logistic curve ", 1, 20, 5, step=1)
+
+
+                severity = st.slider(
+                    "Select the percentage change",
+                    -100, 100, 0, step=10)
+                col_area = st.columns(2)
+                with col_area[0]:
+                    area = st.selectbox(
+                        "Select the area affected",
+                        ["Country", "Region"])
+                with col_area[1]:
+                    if area == "Country":
+                        region = st.selectbox(
+                            "Select the country affected",
+                            ["Scotland", "England", "Ireland", "Wales"])
+                    elif area == "Region":
+                        region = st.multiselect(
+                            "Select the region affected",
+                            ["North", "South", "East", "West"])
 
 st.write(st.session_state.shock_dict)
