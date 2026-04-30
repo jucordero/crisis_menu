@@ -3,3 +3,4 @@ numpy
 xarray
 matplotlib
 streamlit-extras
+st-theme
