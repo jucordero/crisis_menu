@@ -33,11 +33,24 @@ if "response_button" not in st.session_state:
     st.session_state["response_button_pressed"] = False
 
 with st.sidebar:
+
     if st.button("Shock sandpit", type="primary"):
         st.session_state["shock_sandpit_open"] = ~st.session_state["shock_sandpit_open"]
 
     if st.session_state.shock_sandpit_open:
-        with st.container(border=True):
+        sand_pit_container = st.container(border=True)
+        with sand_pit_container:
+            for shock_name, shock_info in st.session_state.shock_dict.items():
+                cols_list_shocks = st.columns(2)
+                with cols_list_shocks[0]:
+                    st.write(f"Shock name: {shock_name}")
+                with cols_list_shocks[1]:
+                    delete_button = st.button("Delete shock", key=f"delete_{shock_name}")
+                    if delete_button:
+                        del st.session_state.shock_dict[shock_name]
+                        st.success(f"Shock {shock_name} deleted")
+                        st.rerun()
+
             with st.container(key="red_button"):
                 shock_button = st.button("Add new shock", key="shock_button")
                 if shock_button:
@@ -126,16 +139,18 @@ with st.sidebar:
                             "region": region
                         }
                         # st.session_state.shock_button_pressed = False
-                        st.success(f"Shock {name} submitted")
-                        st.rerun()
+                        with sand_pit_container:
+                            st.success(f"Shock {name} submitted")
+                        # st.rerun()
 
                 with button_cols[1]:
                     reset_shocks = st.button("Reset shocks", key="reset_shocks")
                     if reset_shocks:
                         st.session_state.shock_dict = {}
                         # st.session_state.shock_button_pressed = False
-                        st.success("Shocks reset")
-                        st.rerun()
+                        with sand_pit_container:
+                            st.success("Shocks reset")
+                        # st.rerun()
 
                 
 
