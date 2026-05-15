@@ -4,3 +4,5 @@ xarray
 matplotlib
 streamlit-extras
 st-theme
+gspread
+altair

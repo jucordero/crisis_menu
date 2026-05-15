@@ -16,5 +16,10 @@ css = """
         }
     }
 
+    [alt=Logo] {
+            height: 10rem;
+            padding-top: 4rem;
+        }
+
 </style>"""
 
